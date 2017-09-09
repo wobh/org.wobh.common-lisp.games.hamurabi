@@ -50,7 +50,7 @@
 ;;; years, acres, populations, storage, prices, and the yearly record.
 
 
-(defparameter *sumer-rnd* (make-random-state T))
+(defparameter *sumer-rnd* (make-random-state t))
 
 (defun set-sumer-land-price (sumeria)
   (setf (sumer-land-price sumeria)
@@ -69,7 +69,7 @@
       (cond ((eq (/ c 2) (floor c 2))
 	     (setf spoiled (floor bushels c))
 	     (decf bushels spoiled))
-	    (T (setf spoiled 0))))
+	    (t (setf spoiled 0))))
     (incf bushels harvest)))
 
 ;; 511 GOSUB 800
@@ -102,7 +102,7 @@
       ;; HORRORS, A 15% CHANCE OF PLAGUE
       ;; FIXME: I translated this directly. (< (1+ (random 20)) 3))
       (when (< (* 10 (- (* 2 (random 1.0 *sumer-rnd*)) 0.3)) 0)
-	(setf plague-year T
+	(setf plague-year t
 	      populus (floor populus 2)))
       (let ((starved (floor bushels-eaten 20)))
 	(when (< starved populus)
@@ -114,7 +114,7 @@
 			     populus)
 			  year))
 		 (incf total-dead dead))
-		(T
+		(t
 		 (print-sumer
 		  (format Nil
 			  "~2&You starved ~D people in one year!!!~%" dead))
@@ -313,7 +313,7 @@
                            have our~%~
                          ~&trivial problems.~%"
 			(sumer-populace-disgruntled sumeria)))
-	       (T
+	       (t
 		(format message
 			"~&A fantastic performance!!!  ~
                            Charlemange, Disraeli,~%~
@@ -368,7 +368,7 @@
       (cond ((< acres-sold 0)
 	     (cond (*handle-negative-input*
 		    (setf acres-sold Nil))
-		   (T
+		   (t
 		    (print-sumer (bad-order-message))
 		    (list 'end-game 'sold-negative-acres acres-sold))))
 	    ((<= acres-sold acres)
@@ -377,10 +377,10 @@
 	    ((< acres acres-sold)
 	     (print-sumer (lack-acres-message sumeria))
 	     (setf acres-sold Nil))
-	    (T
+	    (t
 	     (cond (*handle-other-input*
 		    (setf acres-sold Nil))
-		   (T
+		   (t
 		    (error "Bad input selling land: ~A" acres-sold))))))))
 
 (defun buy-land (sumeria)
@@ -398,7 +398,7 @@
       (cond ((< acres-bought 0)
 	     (cond (*handle-negative-input*
 		    (setf acres-bought Nil))
-		   (T
+		   (t
 		    (print-sumer (bad-order-message))
 		    (list 'end-game 'bought-negative-acres acres-bought))))
 	    ((zerop acres-bought)
@@ -409,10 +409,10 @@
 	    ((<= (* price acres-bought) bushels)
 	     (incf acres acres-bought)
 	     (decf bushels (* price acres-bought)))
-	    (T
+	    (t
 	     (cond (*handle-other-input*
 		    (setf acres-bought Nil))
-		   (T
+		   (t
 		    (error "Bad input buying land: ~A" acres-bought))))))))
 
 
@@ -445,7 +445,7 @@
       (cond ((< feed 0)
 	     (cond (*handle-negative-input*
 		    (setf feed Nil))
-		   (T
+		   (t
 		    (print-sumer (bad-order-message))
 		    (list 'end-game 'feed-negative-bushels feed))))
 	    ((< bushels feed)
@@ -453,10 +453,10 @@
 	     (setf feed Nil))
 	    ((<= feed bushels)
 	     (setf eaten feed))
-	    (T
+	    (t
 	     (cond (*handle-other-input*
 		    (setf feed Nil))
-		   (T
+		   (t
 		    (error "Bad input feeding people: ~A" feed))))))))
 
 ;; 410 PRINT "HOW MANY BUSHELS DO YOU WISH TO FEED YOUR PEOPLE";
@@ -487,7 +487,7 @@
 	    ((< seeded 0)
 	     (cond (*handle-negative-input*
 		    (setf seeded Nil))
-		   (T
+		   (t
 		    (print-sumer (bad-order-message))
 		    (list 'end-game 'plant-negative-acres seeded))))
 	    ((< acres seeded)
@@ -502,10 +502,10 @@
 	    ((<= seeded (* 10 populus))
 	     (setf acres-planted seeded)
 	     (decf bushels (floor seeded 2)))
-	    (T
+	    (t
 	     (cond (*handle-other-input*
 		    (setf seeded Nil))
-		   (T
+		   (t
 		    (error "Bad input planting seeds: ~A" seeded))))))))
 
 ;; 440 PRINT "HOW MANY ACRES DO YOU WISH TO PLANT WITH SEED";

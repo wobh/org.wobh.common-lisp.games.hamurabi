@@ -1,5 +1,5 @@
 ;;;; -*- Mode:lisp;coding:utf-8 -*-
-;;;; Hamurabia
+;;;; Hamurabi
 
 ;;;; DESCRIPTION
 
@@ -28,19 +28,19 @@
 (in-package "HAMURABI")
 
 (defstruct (sumeria-env (:conc-name sumer-))
-  (total-dead 0) ; (d1 0)
-  (pop-starved-avg 0) ; (p1 0)
-  (year 0) ; z
-  (plague-year Nil) ; (q 1)
-  (populus 95) ; p
-  (populus-dead 0) ; (d 0)
-  (populus-new 5) ; (i 5)
+  (total-dead 0)           ; (d1 0)
+  (pop-starved-avg 0)      ; (p1 0)
+  (year 0)                 ; z
+  (plague-year Nil)        ; (q 1)
+  (populus 95)             ; p
+  (populus-dead 0)         ; (d 0)
+  (populus-new 5)          ; (i 5)
   (bushels-harvested 3000) ; (h 3000)
   (bushels-eaten 0)
-  (bushels-spoiled 200) ; (e (- h s))
-  (bushels-stored 2800) ; s 
-  (land-price 3); (y 3)
-  (acres 1000) ; (a (/ h y))
+  (bushels-spoiled 200)    ; (e (- h s))
+  (bushels-stored 2800)    ; s 
+  (land-price 3)           ; (y 3)
+  (acres 1000)             ; (a (/ h y))
   (acres-planted 0)
   )
 
@@ -149,7 +149,7 @@
 ;;; FIXME
 
 (defun sumer-populace-disgruntled (sumeria)
-  (random (* (sumer-populus sumeria) 0.8) *sumer-rnd*))
+  (random (* 0.8 (sumer-populus sumeria)) *sumer-rnd*))
 
 ;; 966 PRINT INT(P*.8*RND(1));"PEOPLE WOULD"
 ;; 970 PRINT "DEARLY LIKE TO SEE YOU ASSASSINATED BUT WE ALL HAVE OUR"

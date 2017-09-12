@@ -31,7 +31,7 @@
   (total-dead 0)           ; (d1 0)
   (pop-starved-avg 0)      ; (p1 0)
   (year 0)                 ; z
-  (plague-year Nil)        ; (q 1)
+  (plague-year nil)        ; (q 1)
   (populus 95)             ; p
   (populus-dead 0)         ; (d 0)
   (populus-new 5)          ; (i 5)
@@ -116,7 +116,7 @@
 		 (incf total-dead dead))
 		(t
 		 (print-sumer
-		  (format Nil
+		  (format nil
 			  "~2&You starved ~D people in one year!!!~%" dead))
 		 (list 'end-game 'impeached))))))))
 
@@ -161,7 +161,7 @@
 (defparameter *sumer-out* *standard-output*)
 
 (defparameter *sumer-fmt* "~:@(~@?~)"
-  "Set to Nil to print in mixed case.")
+  "Set to nil to print in mixed case.")
 
 (defun print-sumer (message &optional (stream *sumer-out*))
   "Print messages to Sumeria."
@@ -179,11 +179,11 @@
   (parse-integer (read-line stream) :junk-allowed T))
 
 (defmacro with-hamurabi-command ((var prompt &key intro) &body body)
-    "Read input and do something with it or set it to Nil a different input is needed."
+    "Read input and do something with it or set it to nil a different input is needed."
     (let* ((out (gensym "OUTCOME"))
 	   (get-choice `(loop
-			   with ,var = Nil
-			   with ,out = Nil
+			   with ,var = nil
+			   with ,out = nil
 			   do 
 			     (setf ,var (read-sumer ,prompt))
 			     (setf ,out ,@body)
@@ -198,7 +198,7 @@
 ;; FIXME this basically saves a few lines of code
 
 (defun title-message ()
-	 (format Nil "~&~32THamurabi~%~
+	 (format nil "~&~32THamurabi~%~
                       ~&~15TCreative Computing  Morristown, New Jersey~%"))
 
 (defun launch-message (&optional stream)
@@ -349,9 +349,9 @@
 ;; 999 END
 
 
-(defparameter *handle-negative-input* Nil)
+(defparameter *handle-negative-input* nil)
 
-(defparameter *handle-other-input* Nil)
+(defparameter *handle-other-input* nil)
 
 ;;; FIXME: learn to use the condition system for handling inputs
 
@@ -364,10 +364,10 @@
 		   (price sumer-land-price)) sumeria
     (with-hamurabi-command
 	(acres-sold
-	 (format Nil "~&How many acres do you wish to sell "))
+	 (format nil "~&How many acres do you wish to sell "))
       (cond ((< acres-sold 0)
 	     (cond (*handle-negative-input*
-		    (setf acres-sold Nil))
+		    (setf acres-sold nil))
 		   (t
 		    (print-sumer (bad-order-message))
 		    (list 'end-game 'sold-negative-acres acres-sold))))
@@ -376,10 +376,10 @@
 	     (incf bushels (* price acres-sold)))
 	    ((< acres acres-sold)
 	     (print-sumer (lack-acres-message sumeria))
-	     (setf acres-sold Nil))
+	     (setf acres-sold nil))
 	    (t
 	     (cond (*handle-other-input*
-		    (setf acres-sold Nil))
+		    (setf acres-sold nil))
 		   (t
 		    (error "Bad input selling land: ~A" acres-sold))))))))
 
@@ -391,13 +391,13 @@
     (set-sumer-land-price sumeria)
     (with-hamurabi-command
 	(acres-bought
-	 (format Nil "~2&How many acres do you wish to buy ")
-	 :intro (format Nil
+	 (format nil "~2&How many acres do you wish to buy ")
+	 :intro (format nil
 			"~2&Land is trading at ~D bushels per acre."
 			price))
       (cond ((< acres-bought 0)
 	     (cond (*handle-negative-input*
-		    (setf acres-bought Nil))
+		    (setf acres-bought nil))
 		   (t
 		    (print-sumer (bad-order-message))
 		    (list 'end-game 'bought-negative-acres acres-bought))))
@@ -405,13 +405,13 @@
 	     (sell-land sumeria))
 	    ((< bushels (* price acres-bought))
 	     (print-sumer (lack-grain-message sumeria))
-	     (setf acres-bought Nil))
+	     (setf acres-bought nil))
 	    ((<= (* price acres-bought) bushels)
 	     (incf acres acres-bought)
 	     (decf bushels (* price acres-bought)))
 	    (t
 	     (cond (*handle-other-input*
-		    (setf acres-bought Nil))
+		    (setf acres-bought nil))
 		   (t
 		    (error "Bad input buying land: ~A" acres-bought))))))))
 
@@ -441,21 +441,21 @@
 		   (price sumer-land-price)) sumeria 
     (with-hamurabi-command
 	(feed
-	 (format Nil "~2&How many bushels do you wish to feed your people "))
+	 (format nil "~2&How many bushels do you wish to feed your people "))
       (cond ((< feed 0)
 	     (cond (*handle-negative-input*
-		    (setf feed Nil))
+		    (setf feed nil))
 		   (t
 		    (print-sumer (bad-order-message))
 		    (list 'end-game 'feed-negative-bushels feed))))
 	    ((< bushels feed)
 	     (print-sumer (lack-grain-message sumeria))
-	     (setf feed Nil))
+	     (setf feed nil))
 	    ((<= feed bushels)
 	     (setf eaten feed))
 	    (t
 	     (cond (*handle-other-input*
-		    (setf feed Nil))
+		    (setf feed nil))
 		   (t
 		    (error "Bad input feeding people: ~A" feed))))))))
 
@@ -481,30 +481,30 @@
 		   (harvest sumer-bushels-harvested)) sumeria
     (with-hamurabi-command
 	(seeded
-	 (format Nil "~2&How many acres do you wish to plant with seed "))
+	 (format nil "~2&How many acres do you wish to plant with seed "))
       (cond ((zerop seeded)
 	     (setf acres-planted seeded))
 	    ((< seeded 0)
 	     (cond (*handle-negative-input*
-		    (setf seeded Nil))
+		    (setf seeded nil))
 		   (t
 		    (print-sumer (bad-order-message))
 		    (list 'end-game 'plant-negative-acres seeded))))
 	    ((< acres seeded)
-	     (setf seeded Nil)
+	     (setf seeded nil)
 	     (print-sumer (lack-acres-message sumeria)))
 	    ((< bushels (floor seeded 2))
-	     (setf seeded Nil)
+	     (setf seeded nil)
 	     (print-sumer (lack-grain-message sumeria)))
 	    ((< (* 10 populus) seeded)
-	     (setf seeded Nil)
+	     (setf seeded nil)
 	     (print-sumer (lack-people-message sumeria)))
 	    ((<= seeded (* 10 populus))
 	     (setf acres-planted seeded)
 	     (decf bushels (floor seeded 2)))
 	    (t
 	     (cond (*handle-other-input*
-		    (setf seeded Nil))
+		    (setf seeded nil))
 		   (t
 		    (error "Bad input planting seeds: ~A" seeded))))))))
 
@@ -539,7 +539,7 @@
     (loop
      for fn in (list #'buy-land #'feed-people #'plant-seed
 		     #'sumer-harvest-year #'sumer-populus-year)
-     with outcome = Nil
+     with outcome = nil
      do
        (setf outcome (funcall fn sumeria))
      until
@@ -557,7 +557,7 @@
     (print-sumer (launch-message))
     (loop
        repeat 10
-       with outcome = Nil
+       with outcome = nil
        do
 	 (setf outcome (turn-year sumeria))
        until

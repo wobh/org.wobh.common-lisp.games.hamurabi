@@ -1,31 +1,15 @@
-;;;; -*- Mode:lisp;coding:utf-8 -*-
-;;;; Hamurabi
+;; -*- mode: lisp -*-
 
-;;;; DESCRIPTION
+(defpackage #:org.wobh.common-lisp.games.hamurabi
+  (:use #:common-lisp)
+  (:nicknames #:hamurabi)
+  (:export #:play)
+  (:documentation "ORG.WOBH.COMMON-LISP.GAMES.HAMURABI
 
-;;;; Converted from the original Focal program and modified
-;;;; for Edusystem 70 by David Ahl, Digital
-;;;; Modified for 8K by Peter Turnbull
-;;;; Modified for Common Lisp by William Clifford.
+Common Lisp Hamurabi
+"))
 
-;;;; based on several sources
-;;;; http://www.atariarchives.org/basicgames/showpage.php?page=78
-
-;;;; AUTHORS
-
-;;;; William H. Clifford <wobh@wobh.org>
-
-;;;; NOTES
-
-;;;; 
-
-(defpackage "HAMURABI"
-  (:nicknames "SUMER" "HAMMURABI")
-  (:use "CL")
-  (:export "MAIN")
-  (:documentation "HAMURABI"))
-
-(in-package "HAMURABI")
+(in-package #:org.wobh.common-lisp.games.hamurabi)
 
 (defstruct (sumeria-env (:conc-name sumer-))
   (total-dead 0)           ; (d1 0)
@@ -54,22 +38,22 @@
 
 (defun set-sumer-land-price (sumeria)
   (setf (sumer-land-price sumeria)
-	(+ 17 (random 10 *sumer-rnd*))))
+        (+ 17 (random 10 *sumer-rnd*))))
 
 ;; 310 C=INT(10*RND(1)):Y=C+17
 ;; ...
 
 (defun sumer-harvest-year (sumeria)
   (with-accessors ((acres-planted sumer-acres-planted)
-		   (bushels sumer-bushels-stored)
-		   (harvest sumer-bushels-harvested)
-		   (spoiled sumer-bushels-spoiled)) sumeria
+                   (bushels sumer-bushels-stored)
+                   (harvest sumer-bushels-harvested)
+                   (spoiled sumer-bushels-spoiled)) sumeria
     (setf harvest (* acres-planted (1+ (random 5 *sumer-rnd*))))
     (let ((c (1+ (random 5 *sumer-rnd*))))
       (cond ((eq (/ c 2) (floor c 2))
-	     (setf spoiled (floor bushels c))
-	     (decf bushels spoiled))
-	    (t (setf spoiled 0))))
+             (setf spoiled (floor bushels c))
+             (decf bushels spoiled))
+            (t (setf spoiled 0))))
     (incf bushels harvest)))
 
 ;; 511 GOSUB 800
@@ -85,40 +69,40 @@
 
 (defun sumer-populus-year (sumeria)
   (with-accessors ((year sumer-year)
-		   (plague-year sumer-plague-year)
-		   (acres sumer-acres)
-		   (acres-planted sumer-acres-planted)
-		   (bushels sumer-bushels-stored)
-		   (bushels-eaten sumer-bushels-eaten)
-		   (populus sumer-populus)
-		   (populus-new sumer-populus-new)
-		   (dead sumer-populus-dead)
-		   (total-dead sumer-total-dead)
-		   (pop-starved-avg sumer-pop-starved-avg)) sumeria
+                   (plague-year sumer-plague-year)
+                   (acres sumer-acres)
+                   (acres-planted sumer-acres-planted)
+                   (bushels sumer-bushels-stored)
+                   (bushels-eaten sumer-bushels-eaten)
+                   (populus sumer-populus)
+                   (populus-new sumer-populus-new)
+                   (dead sumer-populus-dead)
+                   (total-dead sumer-total-dead)
+                   (pop-starved-avg sumer-pop-starved-avg)) sumeria
     (let ((c (1+ (random 5 *sumer-rnd*))))
       (setf populus-new
-	    (floor (1+ (/ (/ (* c 20.0 (+ acres bushels)) populus) 100))))
+            (floor (1+ (/ (/ (* c 20.0 (+ acres bushels)) populus) 100))))
       (incf populus populus-new)
       ;; HORRORS, A 15% CHANCE OF PLAGUE
       ;; FIXME: I translated this directly. (< (1+ (random 20)) 3))
       (when (< (* 10 (- (* 2 (random 1.0 *sumer-rnd*)) 0.3)) 0)
-	(setf plague-year t
-	      populus (floor populus 2)))
+        (setf plague-year t
+              populus (floor populus 2)))
       (let ((starved (floor bushels-eaten 20)))
-	(when (< starved populus)
-	  (setf dead (- populus starved))
-	  (decf populus dead)
-	  (cond ((< dead (* 0.45 populus))
-		 (setf pop-starved-avg
-		       (/ (/ (* (1- year) (+ pop-starved-avg dead) 100.0)
-			     populus)
-			  year))
-		 (incf total-dead dead))
-		(t
-		 (print-sumer
-		  (format nil
-			  "~2&You starved ~D people in one year!!!~%" dead))
-		 (list 'end-game 'impeached))))))))
+        (when (< starved populus)
+          (setf dead (- populus starved))
+          (decf populus dead)
+          (cond ((< dead (* 0.45 populus))
+                 (setf pop-starved-avg
+                       (/ (/ (* (1- year) (+ pop-starved-avg dead) 100.0)
+                             populus)
+                          year))
+                 (incf total-dead dead))
+                (t
+                 (print-sumer
+                  (format nil
+                          "~2&You starved ~D people in one year!!!~%" dead))
+                 (list 'end-game 'impeached))))))))
 
 ;; 227 IF Q>0 THEN 230
 ;; 228 P=INT(P/2)
@@ -166,7 +150,7 @@
 (defun print-sumer (message &optional (stream *sumer-out*))
   "Print messages to Sumeria."
   (apply #'format stream 
-	 (if *sumer-fmt* (list *sumer-fmt* message) (list message)))
+         (if *sumer-fmt* (list *sumer-fmt* message) (list message)))
   (force-output stream))
 
 (defparameter *sumer-io* *query-io*)
@@ -181,24 +165,24 @@
 (defmacro with-hamurabi-command ((var prompt &key intro) &body body)
     "Read input and do something with it or set it to nil a different input is needed."
     (let* ((out (gensym "OUTCOME"))
-	   (get-choice `(loop
-			   with ,var = nil
-			   with ,out = nil
-			   do 
-			     (setf ,var (read-sumer ,prompt))
-			     (setf ,out ,@body)
-			   until (not (null ,var))
-			   finally (return ,out))))
+           (get-choice `(loop
+                           with ,var = nil
+                           with ,out = nil
+                           do 
+                             (setf ,var (read-sumer ,prompt))
+                             (setf ,out ,@body)
+                           until (not (null ,var))
+                           finally (return ,out))))
       (if intro
-	  `(progn
-	     (print-sumer ,intro)
-	     ,get-choice)
-	  get-choice)))
+          `(progn
+             (print-sumer ,intro)
+             ,get-choice)
+          get-choice)))
 
 ;; FIXME this basically saves a few lines of code
 
 (defun title-message ()
-	 (format nil "~&~32THamurabi~%~
+         (format nil "~&~32THamurabi~%~
                       ~&~15TCreative Computing  Morristown, New Jersey~%"))
 
 (defun launch-message (&optional stream)
@@ -212,12 +196,12 @@
 (defun lack-grain-message (sumeria &optional stream)
   (format stream "~2&Hamurabi:  think again. you have only~%~
                   ~&~D bushels of grain.  Now then,"
-	  (sumer-bushels-stored sumeria)))
+          (sumer-bushels-stored sumeria)))
 
 (defun lack-people-message (sumeria &optional stream)
   (format stream "~2&But you have only~
                   ~&~D people to tend the fields.  Now then,"
-	  (sumer-populus sumeria)))
+          (sumer-populus sumeria)))
 
 (defun bad-order-message (&optional stream)
   (format stream "~2&Hamurabi:  I cannot do what you wish.~
@@ -236,29 +220,29 @@
 (defun turn-message (sumeria &optional stream)
   "Make turn message."
   (with-accessors ((year sumer-year)
-		   (acres sumer-acres)
-		   (plague sumer-plague-year)
-		   (populus sumer-populus)
-		   (new-people sumer-populus-new)
-		   (starved sumer-populus-dead)
-		   (bushels sumer-bushels-stored)
-		   (harvest sumer-bushels-harvested)
-		   (spoiled sumer-bushels-spoiled)) sumeria
+                   (acres sumer-acres)
+                   (plague sumer-plague-year)
+                   (populus sumer-populus)
+                   (new-people sumer-populus-new)
+                   (starved sumer-populus-dead)
+                   (bushels sumer-bushels-stored)
+                   (harvest sumer-bushels-harvested)
+                   (spoiled sumer-bushels-spoiled)) sumeria
     (format
      stream
      (with-output-to-string (message)
        (format message "~2&Hamurabi:  I beg to report to you,~%~
                         ~&in year ~D, ~D people starved, ~D came to the city."
-	       year starved new-people)
+               year starved new-people)
        (when plague
-	 (format message
-		 "~&A horrible plague struck!  Half the people died.~%"))
+         (format message
+                 "~&A horrible plague struck!  Half the people died.~%"))
        (format message "~&Population is now ~D~%~
-	                ~&The city now owns ~D acres.~%~
-	                ~&You harvested ~D bushels per acre.~%~
-	                ~&Rats ate ~D bushels.~%~
-	                ~&You have ~D bushels in store.~%"
-	       populus acres harvest spoiled bushels)))))
+                        ~&The city now owns ~D acres.~%~
+                        ~&You harvested ~D bushels per acre.~%~
+                        ~&Rats ate ~D bushels.~%~
+                        ~&You have ~D bushels in store.~%"
+               populus acres harvest spoiled bushels)))))
 
 ;; 95 D1=0:P1=0
 ;; 110 Z=0:P=95:S=2800:H=3000:E=H-S
@@ -280,42 +264,42 @@
 
 (defun summary-message (sumeria &optional stream)
   (with-accessors ((acres sumer-acres)
-		   (populus sumer-populus)
-		   (pop-starved-avg sumer-pop-starved-avg)
-		   (total-dead sumer-total-dead)) sumeria
+                   (populus sumer-populus)
+                   (pop-starved-avg sumer-pop-starved-avg)
+                   (total-dead sumer-total-dead)) sumeria
     (let ((acres-per-person (float (/ acres populus))))
       (format
        stream
        (with-output-to-string (message)
-	 (format message
-		 "~2&In your 10-year term of office, ~d percent of the~%~
+         (format message
+                 "~2&In your 10-year term of office, ~d percent of the~%~
                    ~&population starved per year on average, ~
                      i.e., a total of~%~
                    ~&~D people died!!~%~
                    ~&You started with 10 acres per person and ended with~%~
                    ~&~D acres per person.~%"
-		 pop-starved-avg total-dead acres-per-person)
-	 (cond ((or (< 33 pop-starved-avg) (< 7 acres-per-person))
-		(bad-hamurabi-message message))
-	       ((or (< 10 pop-starved-avg) (< 9 acres-per-person))
-		(format message
-			"~&Your heavy-handed performance smacks of Nero~
+                 pop-starved-avg total-dead acres-per-person)
+         (cond ((or (< 33 pop-starved-avg) (< 7 acres-per-person))
+                (bad-hamurabi-message message))
+               ((or (< 10 pop-starved-avg) (< 9 acres-per-person))
+                (format message
+                        "~&Your heavy-handed performance smacks of Nero~
                            and Ivan IV.~%~
                          ~&The people (remaining) find you an~
                            unpleasant ruler, and,~%~
                          ~&frankly, hate your guts!~%"))
-	       ((or (< 3 pop-starved-avg) (< 10 acres-per-person))
-		(format message
-			"~&Your performance could have been somewhat~
+               ((or (< 3 pop-starved-avg) (< 10 acres-per-person))
+                (format message
+                        "~&Your performance could have been somewhat~
                            better, but~%~
                          ~&really wasn't too bad at all. ~D people would~%~
                          ~&dearly like to see you assassinated but we all~
                            have our~%~
                          ~&trivial problems.~%"
-			(sumer-populace-disgruntled sumeria)))
-	       (t
-		(format message
-			"~&A fantastic performance!!!  ~
+                        (sumer-populace-disgruntled sumeria)))
+               (t
+                (format message
+                        "~&A fantastic performance!!!  ~
                            Charlemange, Disraeli,~%~
                          ~&Jefferson combined could not have~
                            done better!~%"))))))))
@@ -360,60 +344,60 @@
 (defun sell-land (sumeria)
   "Sell land."
   (with-accessors ((acres sumer-acres)
-		   (bushels sumer-bushels-stored)
-		   (price sumer-land-price)) sumeria
+                   (bushels sumer-bushels-stored)
+                   (price sumer-land-price)) sumeria
     (with-hamurabi-command
-	(acres-sold
-	 (format nil "~&How many acres do you wish to sell "))
+        (acres-sold
+         (format nil "~&How many acres do you wish to sell "))
       (cond ((< acres-sold 0)
-	     (cond (*handle-negative-input*
-		    (setf acres-sold nil))
-		   (t
-		    (print-sumer (bad-order-message))
-		    (list 'end-game 'sold-negative-acres acres-sold))))
-	    ((<= acres-sold acres)
-	     (decf acres acres-sold)
-	     (incf bushels (* price acres-sold)))
-	    ((< acres acres-sold)
-	     (print-sumer (lack-acres-message sumeria))
-	     (setf acres-sold nil))
-	    (t
-	     (cond (*handle-other-input*
-		    (setf acres-sold nil))
-		   (t
-		    (error "Bad input selling land: ~A" acres-sold))))))))
+             (cond (*handle-negative-input*
+                    (setf acres-sold nil))
+                   (t
+                    (print-sumer (bad-order-message))
+                    (list 'end-game 'sold-negative-acres acres-sold))))
+            ((<= acres-sold acres)
+             (decf acres acres-sold)
+             (incf bushels (* price acres-sold)))
+            ((< acres acres-sold)
+             (print-sumer (lack-acres-message sumeria))
+             (setf acres-sold nil))
+            (t
+             (cond (*handle-other-input*
+                    (setf acres-sold nil))
+                   (t
+                    (error "Bad input selling land: ~A" acres-sold))))))))
 
 (defun buy-land (sumeria)
   "Buy land."
   (with-accessors ((acres sumer-acres)
-		   (bushels sumer-bushels-stored)
-		   (price sumer-land-price)) sumeria
+                   (bushels sumer-bushels-stored)
+                   (price sumer-land-price)) sumeria
     (set-sumer-land-price sumeria)
     (with-hamurabi-command
-	(acres-bought
-	 (format nil "~2&How many acres do you wish to buy ")
-	 :intro (format nil
-			"~2&Land is trading at ~D bushels per acre."
-			price))
+        (acres-bought
+         (format nil "~2&How many acres do you wish to buy ")
+         :intro (format nil
+                        "~2&Land is trading at ~D bushels per acre."
+                        price))
       (cond ((< acres-bought 0)
-	     (cond (*handle-negative-input*
-		    (setf acres-bought nil))
-		   (t
-		    (print-sumer (bad-order-message))
-		    (list 'end-game 'bought-negative-acres acres-bought))))
-	    ((zerop acres-bought)
-	     (sell-land sumeria))
-	    ((< bushels (* price acres-bought))
-	     (print-sumer (lack-grain-message sumeria))
-	     (setf acres-bought nil))
-	    ((<= (* price acres-bought) bushels)
-	     (incf acres acres-bought)
-	     (decf bushels (* price acres-bought)))
-	    (t
-	     (cond (*handle-other-input*
-		    (setf acres-bought nil))
-		   (t
-		    (error "Bad input buying land: ~A" acres-bought))))))))
+             (cond (*handle-negative-input*
+                    (setf acres-bought nil))
+                   (t
+                    (print-sumer (bad-order-message))
+                    (list 'end-game 'bought-negative-acres acres-bought))))
+            ((zerop acres-bought)
+             (sell-land sumeria))
+            ((< bushels (* price acres-bought))
+             (print-sumer (lack-grain-message sumeria))
+             (setf acres-bought nil))
+            ((<= (* price acres-bought) bushels)
+             (incf acres acres-bought)
+             (decf bushels (* price acres-bought)))
+            (t
+             (cond (*handle-other-input*
+                    (setf acres-bought nil))
+                   (t
+                    (error "Bad input buying land: ~A" acres-bought))))))))
 
 
 ;; 310 C=INT(10*RND(1)): Y=C+17
@@ -436,28 +420,28 @@
 (defun feed-people (sumeria)
   "Feed thee people."
   (with-accessors ((acres sumer-acres)
-		   (bushels sumer-bushels-stored)
-		   (eaten sumer-bushels-eaten)
-		   (price sumer-land-price)) sumeria 
+                   (bushels sumer-bushels-stored)
+                   (eaten sumer-bushels-eaten)
+                   (price sumer-land-price)) sumeria 
     (with-hamurabi-command
-	(feed
-	 (format nil "~2&How many bushels do you wish to feed your people "))
+        (feed
+         (format nil "~2&How many bushels do you wish to feed your people "))
       (cond ((< feed 0)
-	     (cond (*handle-negative-input*
-		    (setf feed nil))
-		   (t
-		    (print-sumer (bad-order-message))
-		    (list 'end-game 'feed-negative-bushels feed))))
-	    ((< bushels feed)
-	     (print-sumer (lack-grain-message sumeria))
-	     (setf feed nil))
-	    ((<= feed bushels)
-	     (setf eaten feed))
-	    (t
-	     (cond (*handle-other-input*
-		    (setf feed nil))
-		   (t
-		    (error "Bad input feeding people: ~A" feed))))))))
+             (cond (*handle-negative-input*
+                    (setf feed nil))
+                   (t
+                    (print-sumer (bad-order-message))
+                    (list 'end-game 'feed-negative-bushels feed))))
+            ((< bushels feed)
+             (print-sumer (lack-grain-message sumeria))
+             (setf feed nil))
+            ((<= feed bushels)
+             (setf eaten feed))
+            (t
+             (cond (*handle-other-input*
+                    (setf feed nil))
+                   (t
+                    (error "Bad input feeding people: ~A" feed))))))))
 
 ;; 410 PRINT "HOW MANY BUSHELS DO YOU WISH TO FEED YOUR PEOPLE";
 ;; 411 INPUT Q
@@ -473,40 +457,40 @@
 (defun plant-seed (sumeria)
   "Plant acres with seed."
   (with-accessors ((acres sumer-acres)
-		   (acres-planted sumer-acres-planted)
-		   (bushels sumer-bushels-stored)
-		   (spoiled sumer-bushels-spoiled)
-		   (land-price sumer-land-price)
-		   (populus sumer-populus)
-		   (harvest sumer-bushels-harvested)) sumeria
+                   (acres-planted sumer-acres-planted)
+                   (bushels sumer-bushels-stored)
+                   (spoiled sumer-bushels-spoiled)
+                   (land-price sumer-land-price)
+                   (populus sumer-populus)
+                   (harvest sumer-bushels-harvested)) sumeria
     (with-hamurabi-command
-	(seeded
-	 (format nil "~2&How many acres do you wish to plant with seed "))
+        (seeded
+         (format nil "~2&How many acres do you wish to plant with seed "))
       (cond ((zerop seeded)
-	     (setf acres-planted seeded))
-	    ((< seeded 0)
-	     (cond (*handle-negative-input*
-		    (setf seeded nil))
-		   (t
-		    (print-sumer (bad-order-message))
-		    (list 'end-game 'plant-negative-acres seeded))))
-	    ((< acres seeded)
-	     (setf seeded nil)
-	     (print-sumer (lack-acres-message sumeria)))
-	    ((< bushels (floor seeded 2))
-	     (setf seeded nil)
-	     (print-sumer (lack-grain-message sumeria)))
-	    ((< (* 10 populus) seeded)
-	     (setf seeded nil)
-	     (print-sumer (lack-people-message sumeria)))
-	    ((<= seeded (* 10 populus))
-	     (setf acres-planted seeded)
-	     (decf bushels (floor seeded 2)))
-	    (t
-	     (cond (*handle-other-input*
-		    (setf seeded nil))
-		   (t
-		    (error "Bad input planting seeds: ~A" seeded))))))))
+             (setf acres-planted seeded))
+            ((< seeded 0)
+             (cond (*handle-negative-input*
+                    (setf seeded nil))
+                   (t
+                    (print-sumer (bad-order-message))
+                    (list 'end-game 'plant-negative-acres seeded))))
+            ((< acres seeded)
+             (setf seeded nil)
+             (print-sumer (lack-acres-message sumeria)))
+            ((< bushels (floor seeded 2))
+             (setf seeded nil)
+             (print-sumer (lack-grain-message sumeria)))
+            ((< (* 10 populus) seeded)
+             (setf seeded nil)
+             (print-sumer (lack-people-message sumeria)))
+            ((<= seeded (* 10 populus))
+             (setf acres-planted seeded)
+             (decf bushels (floor seeded 2)))
+            (t
+             (cond (*handle-other-input*
+                    (setf seeded nil))
+                   (t
+                    (error "Bad input planting seeds: ~A" seeded))))))))
 
 ;; 440 PRINT "HOW MANY ACRES DO YOU WISH TO PLANT WITH SEED";
 ;; 441 INPUT D:IF D=0 THEN 511
@@ -538,20 +522,20 @@
   (print-sumer (turn-message sumeria))
     (loop
      for fn in (list #'buy-land #'feed-people #'plant-seed
-		     #'sumer-harvest-year #'sumer-populus-year)
+                     #'sumer-harvest-year #'sumer-populus-year)
      with outcome = nil
      do
        (setf outcome (funcall fn sumeria))
      until
        (end-game-p outcome)
      finally
-	 (return outcome)))
+         (return outcome)))
 
 ;;; FIXME: The original game does this weird thing where entering a
 ;;; negative number when buying selling feeding or planting quits the
 ;;; game.
 
-(defun main (&optional sumeria)
+(defun play (&optional sumeria)
   (print-sumer (title-message))
   (let ((sumeria (or sumeria (make-sumeria-env))))
     (print-sumer (launch-message))
@@ -559,14 +543,14 @@
        repeat 10
        with outcome = nil
        do
-	 (setf outcome (turn-year sumeria))
+         (setf outcome (turn-year sumeria))
        until
-	 (end-game-p outcome)
+         (end-game-p outcome)
        finally
-	 (unless (find (end-game-type-of outcome)
-		       '(impeached bought-negative-acres sold-negative-acres
-			 feed-negative-bushels plant-negative-acres))
-	   (print-sumer (summary-message sumeria))))
+         (unless (find (end-game-type-of outcome)
+                       '(impeached bought-negative-acres sold-negative-acres
+                         feed-negative-bushels plant-negative-acres))
+           (print-sumer (summary-message sumeria))))
     (print-sumer (end-game-message))
     sumeria))
   
